@@ -1,0 +1,8 @@
+jobs:
+- job: Job1
+  displayName: Job-1 macOS
+  pool:
+    vmImage: "macos-latest"
+  steps:
+    - script: echo ALL GOOD
+      displayName: Initial pipeline deployment
