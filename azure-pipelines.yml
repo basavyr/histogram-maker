@@ -12,7 +12,7 @@ jobs:
       displayName: build with cmake
     - script: cd build && ls
       displayName: check build dir
-    - script: make && make install
+    - script: cd build make && make install
       displayName: install
     - script: ls && cd install && ls
       displayName: check installed proj
