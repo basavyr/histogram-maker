@@ -4,5 +4,8 @@ jobs:
   pool:
     vmImage: "macos-latest"
   steps:
-    - script: echo ALL GOOD
-      displayName: Initial pipeline deployment
+    - script: cmake --version
+      displayName: check if cmake is present
+    - script: which g++ && which gcc && gcc -v
+      displayName: check c++ compilers
+    
