@@ -4,10 +4,6 @@ jobs:
   pool:
     vmImage: "macos-latest"
   steps:
-    - script: cmake --version
-      displayName: check if cmake is present
-    - script: which g++ && which gcc && gcc -v
-      displayName: check c++ compilers
     - script: mkdir -p build && cd build && cmake -D CMAKE_INSTALL_PREFIX=../install ..
       displayName: build with cmake
     - script: cd build && ls
