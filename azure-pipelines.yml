@@ -48,4 +48,6 @@ jobs:
       displayName: copies the test script into lib folder
     - script: cd install && cd python-bindings && cd lib* && python3 test-bindings.py
       displayName: runs the bindings-test
+    - script: cd install && cd python-bindings && cd lib* && python3 test-bindings.py
+      displayName: runs the bindings-test
     
