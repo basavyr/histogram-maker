@@ -10,9 +10,9 @@ jobs:
       displayName: check build dir
     - script: cd build && make && make install
       displayName: install
-    - script: cd install && cd python-bindings&& cp test-bindings.py lib*
+    - script: cd install && cd python-bindings&& cp randoms.py lib*
       displayName: copies the test script into lib folder
-    - script: cd install && cd python-bindings && cd lib* && python3 test-bindings.py
+    - script: cd install && cd python-bindings && cd lib* && python3 randoms.py
       displayName: runs the bindings-test
 
 - job: Job2
@@ -26,9 +26,9 @@ jobs:
       displayName: check build dir
     - script: cd build && make && make install
       displayName: install
-    - script: cd install && cd python-bindings&& cp test-bindings.py lib*
+    - script: cd install && cd python-bindings&& cp randoms.py lib*
       displayName: copies the test script into lib folder
-    - script: cd install && cd python-bindings && cd lib* && python3 test-bindings.py
+    - script: cd install && cd python-bindings && cd lib* && python3 randoms.py
       displayName: runs the bindings-test
     
 - job: Job3
@@ -44,8 +44,8 @@ jobs:
     #   displayName: copies and runs the bindings
     - script: cd build && make && make install
       displayName: install
-    - script: cd install && cd python-bindings&& cp test-bindings.py lib*
+    - script: cd install && cd python-bindings&& cp randoms.py lib*
       displayName: copies the test script into lib folder
-    - script: cd install && cd python-bindings && cd lib* && python3 test-bindings.py
+    - script: cd install && cd python-bindings && cd lib* && python3 randoms.py
       displayName: runs the bindings-test
     
