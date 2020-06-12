@@ -48,4 +48,7 @@ jobs:
     #   displayName: copies the test script into lib folder
     - script: cd install && cd python-bindings && cd lib* && python3 randoms.py && python3 randoms.py
       displayName: runs the bindings-test
-    
+    - script: tar -zcvf histogram-bundle.tar.gz install && cp histogram-bundle.tar.gz /tmp
+      displayName: creates tarball and copies to tmp
+    - publish: /tmp/histogram-bundle.tar.gz
+      artifact: histogram-bundle
