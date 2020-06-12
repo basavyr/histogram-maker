@@ -25,18 +25,18 @@ add_custom_command(OUTPUT build_bindings
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/setup.py build --build-base=${python_bindings_dir}
     DEPENDS copy_sources) # this needs to depend on the copy process of the python script and the C++ source files otherwise it can fail on make & make install 
 
-add_custom_target(run_build ALL
-    DEPENDS build_bindings)
+add_custom_command(OUTPUT testcopy
+    COMMAND cp ${CMAKE_SOURCE_DIR}/python/randoms.py ${python_bindings_dir}/lib*
+    COMMAND cp ${CMAKE_SOURCE_DIR}/python/histogram.py ${python_bindings_dir}/lib*
+    DEPENDS build_bindings
+  )# copies the test scripts into lib dir after install
 
 install(TARGETS randoms LIBRARY DESTINATION lib)
-# install(FILES randoms.cc randoms.hh setup.py DESTINATION ${CMAKE_INSTALL_PREFIX}/py_dir)
-install(FILES ${python_bindings_dir} DESTINATION ${CMAKE_INSTALL_PREFIX}/ )
-# install(CODE "execute_process(COMMAND pwd)")
+install(DIRECTORY ${python_bindings_dir} DESTINATION ${CMAKE_INSTALL_PREFIX}/)
 
-# add_custom_command(OUTPUT build_extension POST_BUILD
-#   COMMAND pwd
-#   DEPENDS setup.py
-# )
+# install(FILES randoms.cc randoms.hh setup.py DESTINATION ${CMAKE_INSTALL_PREFIX}/py_dir)
+# install(FILES ${python_bindings_dir} DESTINATION ${CMAKE_INSTALL_PREFIX}/ )
+# install(FILES ${python_bindings_dir} DESTINATION ${CMAKE_INSTALL_PREFIX}/new-folder )
 
 add_custom_target(run_extension ALL
-    DEPENDS copy_sources  run_build)
+    DEPENDS copy_sources  build_bindings testcopy)
