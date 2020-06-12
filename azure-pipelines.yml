@@ -10,6 +10,10 @@ jobs:
       displayName: check build dir
     - script: cd build && make && make install
       displayName: install
-    - script: ls && cd install && ls
-      displayName: check installed proj
+    - script: cd install && ls && cd python-bindings && ls
+      displayName: check installed proj tree
+    - script: cd install && cp test-bindings.py lib*
+      displayName: copies the test script into lib folder
+    - script: cd install && cd test-bindings && cd lib* && python3 test-bindings.py
+      displayName: runs the bindings
     
