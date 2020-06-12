@@ -31,7 +31,7 @@ add_custom_target(run_build ALL
 install(TARGETS randoms LIBRARY DESTINATION lib)
 # install(FILES randoms.cc randoms.hh setup.py DESTINATION ${CMAKE_INSTALL_PREFIX}/py_dir)
 install(FILES ${python_bindings_dir} DESTINATION ${CMAKE_INSTALL_PREFIX}/ )
-install(CODE "execute_process(COMMAND pwd)")
+# install(CODE "execute_process(COMMAND pwd)")
 
 # add_custom_command(OUTPUT build_extension POST_BUILD
 #   COMMAND pwd

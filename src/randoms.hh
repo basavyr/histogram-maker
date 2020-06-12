@@ -13,7 +13,6 @@ static const char ModuleDoc[] = "This is an extension that generates random numb
 static const char ModuleName[] = "randoms";
 
 PyObject *generate_randoms(PyObject *self, PyObject *args);
-
 static const char generate_randomsMethodName[] = "randoms";
 static const char generate_randomsMethodDoc[] = "This method returns a container with N random elements inside. N is aribtrary - set by user";
 

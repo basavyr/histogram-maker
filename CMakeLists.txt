@@ -27,12 +27,18 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 # which point to directories outside the build tree to the install RPATH
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+find_package (Python3 COMPONENTS Interpreter Development) # look for python3
+# find_package (Python2 COMPONENTS Interpreter Development)#  look for python2
+
 #installs the missing packages on the platform
-find_package(PythonInterp REQUIRED)
-add_custom_target(py_packages 
-    COMMAND pip install -r ${pkgs})
+
+# add_custom_target(py2_packages 
+#     COMMAND python2 -m pip install -r ${pkgs})
+
+add_custom_target(py3_packages 
+    COMMAND python3 -m pip install -r ${pkgs})
 add_custom_target(install_packages ALL
-    DEPENDS  py_packages )
+    DEPENDS  py3_packages )
 
 add_subdirectory(src)
 add_subdirectory(python)
