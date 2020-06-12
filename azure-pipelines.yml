@@ -42,7 +42,7 @@ jobs:
     #   displayName: check build dir
     # - script: cd src && cd build && cd lib* && cp ../../../python/test-bindings.py . && python3 test-bindings.py 
     #   displayName: copies and runs the bindings
-    - script: cd build && make && make install
+    - script: cd build &&  make install
       displayName: install
     # - script: cd install && cd python-bindings&& cp randoms.py lib*
     #   displayName: copies the test script into lib folder
