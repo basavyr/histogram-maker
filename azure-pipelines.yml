@@ -14,6 +14,6 @@ jobs:
       displayName: check installed proj tree
     - script: cd install && cp test-bindings.py lib*
       displayName: copies the test script into lib folder
-    - script: cd install && cd test-bindings && cd lib* && python3 test-bindings.py
+    - script: cd install && cd python-bindings && cd lib* && python3 test-bindings.py
       displayName: runs the bindings
     
