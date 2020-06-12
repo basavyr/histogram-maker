@@ -12,7 +12,7 @@ jobs:
       displayName: install
     - script: cd install && ls && cd python-bindings && ls
       displayName: check installed proj tree
-    - script: cd install && cp test-bindings.py lib*
+    - script: cd install &&cd python-bindings&& cp test-bindings.py lib*
       displayName: copies the test script into lib folder
     - script: cd install && cd python-bindings && cd lib* && python3 test-bindings.py
       displayName: runs the bindings
