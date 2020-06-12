@@ -23,7 +23,7 @@ target_link_libraries(randoms ${PYTHON_LIBRARIES})
 find_package(PythonInterp REQUIRED)
 add_custom_command(OUTPUT build_bindings
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/setup.py build --build-base=${python_bindings_dir}
-    DEPENDS copy_sources)
+    DEPENDS copy_sources) # this needs to depend on the copy process of the python script and the C++ source files otherwise it can fail on make & make install 
 
 add_custom_target(run_build ALL
     DEPENDS build_bindings)
