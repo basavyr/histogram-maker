@@ -36,6 +36,33 @@ double average(const std::vector<T> &v)
     return static_cast<double>(sum / v.size());
 }
 
+std::vector<int> normal_dist_container(size_t size, int mean, int std_dev)
+{
+    std::vector<int> data;
+    std::normal_distribution<int> normal(mean, std_dev);
+    for (auto id = 0; id < size; ++id)
+    {
+        auto current_normal = normal(twister);
+        data.emplace_back(current_normal);
+    }
+    return data;
+}
+
+template <typename T>
+std::vector<T> minmax_normalize(const std::vector<T> &v)
+{
+    std::vector<T> normalized_v;
+    auto extrems = std::minmax_element(v.begin(), v.end());
+    T minval = *extrems.first;
+    T maxval = *extrems.second;
+    for (auto id = 0; id < v.size(); ++id)
+    {
+        auto current_value = static_cast<T>((v.at(id) - minval) / (maxval - minval));
+        normalized_v.emplace_back(current_value);
+    }
+    return normalized_v;
+}
+
 PyObject *generate_randoms(PyObject *self, PyObject *args)
 {
     Py_ssize_t arr_size;
@@ -51,7 +78,28 @@ PyObject *generate_randoms(PyObject *self, PyObject *args)
         PyList_SetItem(py_container, id, current_int);
     }
     auto avg = average(cxx_container);
-    result = Py_BuildValue("Od", py_container,avg);
+    result = Py_BuildValue("Od", py_container, avg);
     Py_XDECREF(py_container);
+    return result;
+}
+
+PyObject *generate_normalDistribution(PyObject *self, PyObject *args)
+{
+    Py_ssize_t data_size;
+    int mean, std_dev;
+    if (!PyArg_ParseTuple(args, "nii", &data_size, &mean, &std_dev))
+        return NULL;
+    // auto normal_data = normal_dist_container(data_size, mean, std_dev);
+    // auto normalized_data = minmax_normalize<int>(normal_data);
+    PyObject *result;
+    PyObject *py_data = PyList_New(data_size);
+    for (auto id = 0; id < data_size; ++id)
+    {
+        PyObject *element_pure = PyLong_FromLong(1000);
+        // PyObject *element_normalized = PyFloat_FromDouble(normalized_data.at(id));
+        PyList_SetItem(py_data, id, element_pure);
+    }
+    result = Py_BuildValue("O", py_data);
+    Py_XDECREF(py_data);
     return result;
 }
