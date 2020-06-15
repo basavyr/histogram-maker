@@ -2,8 +2,9 @@
 
 static std::random_device rd;
 static const int seed = 1137; //constant seed for debug purposes
+//! if the mersenne twister is declared here, the method that generates the container will keep giving different numbers in the same runtime
 // static std::mt19937 twister{rd()};
-static std::mt19937 twister{seed};
+// static std::mt19937 twister{seed};
 
 template <typename T>
 struct Counter
@@ -15,6 +16,8 @@ struct Counter
 //return an integer number between @left and @right
 int rand_int(int left, int right)
 {
+    //? declare mersenne twister here to get same random sequence each time this method is called
+    std::mt19937 twister(seed);
     std::uniform_int_distribution<int> int_dist(left, right);
     auto r_int = int_dist(twister);
     return r_int;
@@ -47,7 +50,8 @@ template <typename vType, typename argType>
 std::vector<vType> normal_dist_container(size_t size, argType mean, argType std_dev)
 {
     std::vector<vType> data;
-
+    //? declare mersenne twister here to get same random sequence each time this method is called
+    std::mt19937 twister(seed);
     //the norma distribution must be float or double
     //the integer container will be generated through the round function
     std::normal_distribution<double> normal(static_cast<double>(mean), static_cast<double>(std_dev));
@@ -164,16 +168,35 @@ PyObject *generate_clHistogram(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "ndd", &arr_size, &mean, &std_dev))
         return NULL;
     auto data = normal_dist_container<int, double>(arr_size, mean, std_dev);
-    std::sort(data.begin(), data.end());
+    auto counted_data = count_data(data);
+    Py_ssize_t py_counted_size = counted_data.size();
     PyObject *result;
     PyObject *py_data = PyList_New(arr_size);
+    PyObject *py_data_elements = PyList_New(py_counted_size);
+    PyObject *py_data_counters = PyList_New(py_counted_size);
     for (auto id = 0; id < arr_size; ++id)
     {
         auto current_element = data.at(id);
         PyObject *element_pure = PyLong_FromLong(current_element);
         PyList_SetItem(py_data, id, element_pure);
     }
-    result = Py_BuildValue("O", py_data);
+    for (auto id = 0; id < py_counted_size; ++id)
+    {
+        auto current_counted_element = counted_data.at(id);
+        PyObject *py_element = PyLong_FromLong(current_counted_element.elements);
+        PyObject *py_counter = PyLong_FromLong(current_counted_element.counters);
+        PyList_SetItem(py_data_elements, id, py_element);
+        PyList_SetItem(py_data_counters, id, py_counter);
+    }
+    // for (auto id = 0; id < py_counted_size; ++id)
+    // {
+    //     auto current_element = data.at(id);
+    //     PyObject *element_pure = PyLong_FromLong(current_element);
+    //     PyList_SetItem(py_data, id, element_pure);
+    // }
+    result = Py_BuildValue("OOO", py_data, py_data_elements, py_data_counters);
     Py_XDECREF(py_data);
+    Py_XDECREF(py_data_elements);
+    Py_XDECREF(py_data_counters);
     return result;
 }
