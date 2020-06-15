@@ -5,6 +5,13 @@ static const int seed = 1137; //constant seed for debug purposes
 // static std::mt19937 twister{rd()};
 static std::mt19937 twister{seed};
 
+template <typename T>
+struct Counter
+{
+    T counters;
+    T elements;
+};
+
 //return an integer number between @left and @right
 int rand_int(int left, int right)
 {
@@ -47,7 +54,7 @@ std::vector<vType> normal_dist_container(size_t size, argType mean, argType std_
 
     for (auto id = 0; id < size; ++id)
     {
-        auto current_normal = normal(twister);
+        auto current_normal = std::round(normal(twister));
         data.emplace_back(static_cast<vType>(current_normal));
     }
     return data;
@@ -62,10 +69,52 @@ std::vector<T> minmax_normalize(const std::vector<T> &v)
     T maxval = *extrems.second;
     for (auto id = 0; id < v.size(); ++id)
     {
-        auto current_value = static_cast<T>((v.at(id) - minval) / (maxval - minval));
+        //get the nearest integer
+        auto current_value = std::round((v.at(id) - minval) / (maxval - minval));
         normalized_v.emplace_back(current_value);
     }
     return normalized_v;
+}
+
+std::vector<Counter<int>> count_data(std::vector<int> v)
+{
+    std::sort(v.begin(), v.end());
+    std::vector<Counter<int>> counted_elements;
+    int count = 0;
+    counted_elements.emplace_back();
+    counted_elements.at(count).elements = v.at(count);
+    counted_elements.at(count).counters++;
+    for (int id = 1; id < v.size(); ++id)
+    {
+        auto current_element = v.at(id);
+        if (counted_elements.at(count).elements != current_element)
+        {
+            count++;
+            counted_elements.emplace_back();
+            counted_elements.at(count).elements = v.at(id);
+            ++counted_elements.at(count).counters;
+        }
+        else
+        {
+            ++counted_elements.at(count).counters;
+        }
+    }
+    return counted_elements;
+}
+
+std::pair<int, int> frequency(const std::vector<Counter<int>> &v, int which)
+{
+    std::pair<int, int> P;
+    P.first = which;
+    P.second = 0;
+    for (auto id = 0; id < v.size(); ++id)
+    {
+        if (P.first == v.at(id).elements)
+        {
+            P.second = v.at(id).counters;
+        }
+    }
+    return P;
 }
 
 PyObject *generate_randoms(PyObject *self, PyObject *args)
@@ -114,7 +163,17 @@ PyObject *generate_clHistogram(PyObject *self, PyObject *args)
     double mean, std_dev;
     if (!PyArg_ParseTuple(args, "ndd", &arr_size, &mean, &std_dev))
         return NULL;
+    auto data = normal_dist_container<int, double>(arr_size, mean, std_dev);
+    std::sort(data.begin(), data.end());
     PyObject *result;
-    result = Py_BuildValue("O", arr_size);
+    PyObject *py_data = PyList_New(arr_size);
+    for (auto id = 0; id < arr_size; ++id)
+    {
+        auto current_element = data.at(id);
+        PyObject *element_pure = PyLong_FromLong(current_element);
+        PyList_SetItem(py_data, id, element_pure);
+    }
+    result = Py_BuildValue("O", py_data);
+    Py_XDECREF(py_data);
     return result;
 }
