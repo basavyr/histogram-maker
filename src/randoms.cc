@@ -36,14 +36,19 @@ double average(const std::vector<T> &v)
     return static_cast<double>(sum / v.size());
 }
 
-std::vector<int> normal_dist_container(size_t size, int mean, int std_dev)
+template <typename vType, typename argType>
+std::vector<vType> normal_dist_container(size_t size, argType mean, argType std_dev)
 {
-    std::vector<int> data;
-    std::normal_distribution<int> normal(mean, std_dev);
+    std::vector<vType> data;
+
+    //the norma distribution must be float or double
+    //the integer container will be generated through the round function
+    std::normal_distribution<double> normal(static_cast<double>(mean), static_cast<double>(std_dev));
+
     for (auto id = 0; id < size; ++id)
     {
         auto current_normal = normal(twister);
-        data.emplace_back(current_normal);
+        data.emplace_back(static_cast<vType>(current_normal));
     }
     return data;
 }
@@ -86,20 +91,30 @@ PyObject *generate_randoms(PyObject *self, PyObject *args)
 PyObject *generate_normalDistribution(PyObject *self, PyObject *args)
 {
     Py_ssize_t data_size;
-    int mean, std_dev;
-    if (!PyArg_ParseTuple(args, "nii", &data_size, &mean, &std_dev))
+    double mean, std_dev;
+    if (!PyArg_ParseTuple(args, "ndd", &data_size, &mean, &std_dev))
         return NULL;
-    // auto normal_data = normal_dist_container(data_size, mean, std_dev);
-    // auto normalized_data = minmax_normalize<int>(normal_data);
     PyObject *result;
+    auto data = normal_dist_container<int, double>(data_size, mean, std_dev);
     PyObject *py_data = PyList_New(data_size);
     for (auto id = 0; id < data_size; ++id)
     {
-        PyObject *element_pure = PyLong_FromLong(1000);
-        // PyObject *element_normalized = PyFloat_FromDouble(normalized_data.at(id));
+        auto current_element = data.at(id);
+        PyObject *element_pure = PyLong_FromLong(current_element);
         PyList_SetItem(py_data, id, element_pure);
     }
     result = Py_BuildValue("O", py_data);
     Py_XDECREF(py_data);
+    return result;
+}
+
+PyObject *generate_clHistogram(PyObject *self, PyObject *args)
+{
+    Py_ssize_t arr_size;
+    double mean, std_dev;
+    if (!PyArg_ParseTuple(args, "ndd", &arr_size, &mean, &std_dev))
+        return NULL;
+    PyObject *result;
+    result = Py_BuildValue("O", arr_size);
     return result;
 }

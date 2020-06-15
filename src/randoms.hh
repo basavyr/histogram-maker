@@ -4,6 +4,8 @@
 #include <random>
 #include <string>
 #include <chrono>
+#include <map>
+#include <cmath>
 #include <algorithm>
 
 #if PY_MAJOR_VERSION >= 3
@@ -21,9 +23,14 @@ PyObject *generate_normalDistribution(PyObject *self, PyObject *args);
 static const char generate_normalDistributionMethodName[] = "distribution";
 static const char generate_normalDistributionMethodDoc[] = "This method returns a container that has a normal distributed data set.";
 
+PyObject *generate_clHistogram(PyObject *self, PyObject *args);
+static const char generate_clHistogramMethodName[] = "clhistogram";
+static const char generate_clHistogramMethodDoc[] = "This method returns a visual histogram, when executed by the user from the command line. Uses std::map from C++";
+
 static PyMethodDef randomsMethodDef[] = {
     {generate_randomsMethodName, generate_randoms, METH_VARARGS, generate_randomsMethodDoc},
     {generate_normalDistributionMethodName, generate_normalDistribution, METH_VARARGS, generate_normalDistributionMethodDoc},
+    {generate_clHistogramMethodName, generate_clHistogram, METH_VARARGS, generate_clHistogramMethodDoc},
     {NULL, NULL, 0, NULL}};
 
 #ifdef PY3K
