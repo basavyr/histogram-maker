@@ -38,19 +38,17 @@ jobs:
   steps:
     - script: mkdir -p build && cd build && cmake -D CMAKE_INSTALL_PREFIX=../install ..
       displayName: build with cmake
-    # - script: cd src && python3 setup.py build && cd build && ls && cd lib* && ls
-    #   displayName: check build dir
-    # - script: cd src && cd build && cd lib* && cp ../../../python/test-bindings.py . && python3 test-bindings.py 
-    #   displayName: copies and runs the bindings
     - script: cd build &&  make install
       displayName: install
-    # - script: cd install && cd python-bindings&& cp randoms.py lib*
-    #   displayName: copies the test script into lib folder
     - script: cd install && cd python-bindings && cd lib* && python3 randoms.py
       displayName: runs the random script
     - script: cd install && cd python-bindings && cd lib* && python3 histogram.py
       displayName: runs the histogram script
-    - script: tar -zcvf histogram-bundle.tar.gz install && cp histogram-bundle.tar.gz /tmp
-      displayName: creates tarball and copies to tmp
-    - publish: /tmp/histogram-bundle.tar.gz
-      artifact: histogram-bundle
+    - script: tar -zcvf install-bundle.tar.gz install && cp install-bundle.tar.gz /tmp
+      displayName: creates tarball with install dir and copies to tmp
+    - script: cd install && cd python-bindings && cd lib* && tar -zcvf plot-bundle.tar.gz output && cp plot-bundle.tar.gz /tmp
+      displayName: creates tarball with histograms and copies to tmp
+    - publish: /tmp/install-bundle.tar.gz
+      artifact: install-bundle
+    - publish: /tmp/plot-bundle.tar.gz
+      artifact: plot-bundle
