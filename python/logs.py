@@ -1,0 +1,3 @@
+import platform
+
+path=('../logs/')

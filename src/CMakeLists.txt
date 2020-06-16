@@ -33,6 +33,7 @@ add_custom_command(OUTPUT copy_scripts
   #once the python scripts which are based on the random module are inside the lib folder, they can be executed without issue
 add_custom_command(OUTPUT plot_storage
     COMMAND mkdir -p ${python_bindings_dir}/output
+    COMMAND mkdir -p ${python_bindings_dir}/logs
     DEPENDS copy_scripts
   )# creates output directory for python plot storage
 

@@ -1,11 +1,15 @@
-import matplotlib.pyplot as plt
-from matplotlib import rc
 import randoms as rnd
 import numpy as np
 import platform as os
-
+from datetime import datetime
+import time
+import sys
+import socket  # for IP
+import matplotlib.pyplot as plt
+from matplotlib import rc
 import matplotlib
 matplotlib.use('Agg')
+
 
 N1 = 1000
 N2 = 100000
@@ -118,21 +122,42 @@ def CreateHistogram(N1, N2, data1, params1, bins1, data2, params2,  bins2, filen
     plt.close()
 
 
-path = '../output/'
+path_plots = '../output/'
+path_logs = '../logs/'
 
 counts_filename = 'counts-hist'
 density_filename = 'dens-hist'
 
 extension = '.pdf'
-
+log_ext = '.log'
 which_os = os.system()
+
+
+def generate_log_line(info):
+    message = 'Plot'
+
 
 NPLOTS = 15
 
+log_name = path_logs+'log-file-'+str(os.platform())+log_ext
+
+HOSTNAME = socket.gethostname()
+IP = socket.gethostbyname(HOSTNAME)
+current_os = str(os.system())
+pyM = sys.version_info.major
+pym = sys.version_info.minor
+AARCH = str(os.processor())+'_'+str(os.architecture()[0])
+nl = '\n'
+
+
+log_file = open(log_name, 'w')
+
 for plot_id in range(NPLOTS):
     print(f'Generating plot no-{plot_id+1}...')
-    filename1 = path+density_filename+'-'+str(plot_id+1)+'-'+which_os+extension
-    filename2 = path+counts_filename+'-'+str(plot_id+1)+'-'+which_os+extension
+    filename1 = path_plots+density_filename + \
+        '-'+str(plot_id+1)+'-'+which_os+extension
+    filename2 = path_plots+counts_filename + \
+        '-'+str(plot_id+1)+'-'+which_os+extension
     N1 = 1000
     N2 = 100000
     params1 = [[0, 10], [0, 15], [0, 25], [0, 35]]
@@ -150,7 +175,12 @@ for plot_id in range(NPLOTS):
                     data_2, params2, bins2, filename1, filename2)
     print(f'Finished plot no-{plot_id+1}!')
     print(f'\n')
+    status = 1
+    now = str(datetime.utcnow())
+    s0 = f'HIST_ID={plot_id} STATUS={status} GEN_TIME @{now} IP={IP} HSTNM={HOSTNAME} PLTFM={current_os} AARCH={AARCH} PY_V={pyM}.{pym}'
+    log_file.write(s0+nl)
 
+log_file.close()
 
 # print(data1_1)
 # print(data1_2)
