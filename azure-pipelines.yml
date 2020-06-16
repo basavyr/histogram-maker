@@ -6,57 +6,57 @@ variables:
   install_artifact_macos_catalina: install-bundle-macos-catalina
   install_artifact_ubuntu: install-bundle-ubuntu
 jobs:
-- job: Job1
-  displayName: Job-1 macOS Catalina
-  pool:
-    vmImage: "macos-latest"
-  variables:
-    os: darwin
-  steps:
-    - script: mkdir -p build && cd build && cmake -D CMAKE_INSTALL_PREFIX=../install ..
-      displayName: build with cmake
-    - script: cd build &&  make install
-      displayName: install
-    - script: cd install && cd python-bindings && cd lib* && python3 randoms.py
-      displayName: runs the random script
-    - script: cd install && cd python-bindings && cd lib* && python3 histogram.py
-      displayName: runs the histogram script
-    - script: cd install && cd python-bindings  && tar -zcvf plot-bundle-$OS.tar.gz output && cp plot-bundle-$OS.tar.gz /tmp
-      displayName: creates tarball with histograms and copies to tmp $(os)
-    - script: cd install && cd python-bindings  && rm -rf output
-      displayName: clears the plot storage before making installer bundle
-    - script: tar -zcvf install-bundle-$OS.tar.gz install && cp install-bundle-$OS.tar.gz /tmp
-      displayName: creates tarball with install dir and copies to tmp
-    - publish: /tmp/plot-bundle-$OS.tar.gz
-      artifact: $(plot_artifact_macos_catalina)
-    - publish: /tmp/install-bundle-$OS.tar.gz
-      artifact: $(install_artifact_macos_catalina)
+# - job: Job1
+#   displayName: Job-1 macOS Catalina
+#   pool:
+#     vmImage: "macos-latest"
+#   variables:
+#     os: darwin
+#   steps:
+#     - script: mkdir -p build && cd build && cmake -D CMAKE_INSTALL_PREFIX=../install ..
+#       displayName: build with cmake
+#     - script: cd build &&  make install
+#       displayName: install
+#     - script: cd install && cd python-bindings && cd lib* && python3 randoms.py
+#       displayName: runs the random script
+#     - script: cd install && cd python-bindings && cd lib* && python3 histogram.py
+#       displayName: runs the histogram script
+#     - script: cd install && cd python-bindings  && tar -zcvf plot-bundle-$OS.tar.gz output && cp plot-bundle-$OS.tar.gz /tmp
+#       displayName: creates tarball with histograms and copies to tmp $(os)
+#     - script: cd install && cd python-bindings  && rm -rf output
+#       displayName: clears the plot storage before making installer bundle
+#     - script: tar -zcvf install-bundle-$OS.tar.gz install && cp install-bundle-$OS.tar.gz /tmp
+#       displayName: creates tarball with install dir and copies to tmp
+#     - publish: /tmp/plot-bundle-$OS.tar.gz
+#       artifact: $(plot_artifact_macos_catalina)
+#     - publish: /tmp/install-bundle-$OS.tar.gz
+#       artifact: $(install_artifact_macos_catalina)
 
-- job: Job2
-  displayName: Job-2 macOS Mojave
-  pool:
-    vmImage: "macos-10.14"
-  variables:
-    os: darwin
-  steps:
-    - script: mkdir -p build && cd build && cmake -D CMAKE_INSTALL_PREFIX=../install ..
-      displayName: build with cmake
-    - script: cd build &&  make install
-      displayName: install
-    - script: cd install && cd python-bindings && cd lib* && python3 randoms.py
-      displayName: runs the random script
-    - script: cd install && cd python-bindings && cd lib* && python3 histogram.py
-      displayName: runs the histogram script
-    - script: cd install && cd python-bindings  && tar -zcvf plot-bundle-$OS.tar.gz output && cp plot-bundle-$OS.tar.gz /tmp
-      displayName: creates tarball with histograms and copies to tmp
-    - script: cd install && cd python-bindings  && rm -rf output
-      displayName: clears the plot storage before making installer bundle
-    - script: tar -zcvf install-bundle-$OS.tar.gz install && cp install-bundle-$OS.tar.gz /tmp
-      displayName: creates tarball with install dir and copies to tmp
-    - publish: /tmp/plot-bundle-$OS.tar.gz
-      artifact: $(plot_artifact_macos_mojave)
-    - publish: /tmp/install-bundle-$OS.tar.gz
-      artifact: $(install_artifact_macos_mojave)
+# - job: Job2
+#   displayName: Job-2 macOS Mojave
+#   pool:
+#     vmImage: "macos-10.14"
+#   variables:
+#     os: darwin
+#   steps:
+#     - script: mkdir -p build && cd build && cmake -D CMAKE_INSTALL_PREFIX=../install ..
+#       displayName: build with cmake
+#     - script: cd build &&  make install
+#       displayName: install
+#     - script: cd install && cd python-bindings && cd lib* && python3 randoms.py
+#       displayName: runs the random script
+#     - script: cd install && cd python-bindings && cd lib* && python3 histogram.py
+#       displayName: runs the histogram script
+#     - script: cd install && cd python-bindings  && tar -zcvf plot-bundle-$OS.tar.gz output && cp plot-bundle-$OS.tar.gz /tmp
+#       displayName: creates tarball with histograms and copies to tmp
+#     - script: cd install && cd python-bindings  && rm -rf output
+#       displayName: clears the plot storage before making installer bundle
+#     - script: tar -zcvf install-bundle-$OS.tar.gz install && cp install-bundle-$OS.tar.gz /tmp
+#       displayName: creates tarball with install dir and copies to tmp
+#     - publish: /tmp/plot-bundle-$OS.tar.gz
+#       artifact: $(plot_artifact_macos_mojave)
+#     - publish: /tmp/install-bundle-$OS.tar.gz
+#       artifact: $(install_artifact_macos_mojave)
     
 - job: Job3
   displayName: Job-3 Ubuntu
@@ -79,7 +79,9 @@ jobs:
       displayName: clears the plot storage before making installer bundle
     - script: tar -zcvf install-bundle-$OS.tar.gz install && cp install-bundle-$OS.tar.gz /tmp
       displayName: creates tarball with install dir and copies to tmp
-    - publish: /tmp/plot-bundle-$OS.tar.gz
-      artifact: $(plot-bundle-ubuntu)
-    - publish: /tmp/install-bundle-$OS.tar.gz
-      artifact: $(install-bundle-ubuntu)
+    - script: cd /tmp && ls
+      displayName: checks bundles
+    # - publish: /tmp/plot-bundle-$OS.tar.gz
+    #   artifact: $(plot-bundle-ubuntu)
+    # - publish: /tmp/install-bundle-$OS.tar.gz
+    #   artifact: $(install-bundle-ubuntu)
