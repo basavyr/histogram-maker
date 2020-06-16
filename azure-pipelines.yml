@@ -21,15 +21,15 @@ jobs:
       displayName: runs the random script
     - script: cd install && cd python-bindings && cd lib* && python3 histogram.py
       displayName: runs the histogram script
-    - script: cd install && cd python-bindings  && tar -zcvf plot-bundle.tar.gz output && cp plot-bundle.tar.gz /tmp
-      displayName: creates tarball with histograms and copies to tmp
+    - script: cd install && cd python-bindings  && tar -zcvf plot-bundle-$(os).tar.gz output && cp plot-bundle-$(os).tar.gz /tmp
+      displayName: creates tarball with histograms and copies to tmp $(os)
     - script: cd install && cd python-bindings  && rm -rf output
       displayName: clears the plot storage before making installer bundle
-    - script: tar -zcvf install-bundle.tar.gz install && cp install-bundle.tar.gz /tmp
+    - script: tar -zcvf install-bundle-$(os).tar.gz install && cp install-bundle-$(os).tar.gz /tmp
       displayName: creates tarball with install dir and copies to tmp
-    - publish: /tmp/install-bundle.tar.gz
+    - publish: /tmp/install-bundle-$(os).tar.gz
       artifact: $(plot_artifact_macos_catalina)
-    - publish: /tmp/plot-bundle.tar.gz
+    - publish: /tmp/plot-bundle-$(os).tar.gz
       artifact: $(install_artifact_macos_catalina)
 
 - job: Job2
@@ -51,11 +51,11 @@ jobs:
       displayName: creates tarball with histograms and copies to tmp
     - script: cd install && cd python-bindings  && rm -rf output
       displayName: clears the plot storage before making installer bundle
-    - script: tar -zcvf install-bundle.tar.gz install && cp install-bundle.tar.gz /tmp
+    - script: tar -zcvf install-bundle-$(os).tar.gz install && cp install-bundle-$(os).tar.gz /tmp
       displayName: creates tarball with install dir and copies to tmp
-    - publish: /tmp/install-bundle.tar.gz
+    - publish: /tmp/install-bundle-$(os).tar.gz
       artifact: $(plot_artifact_macos_mojave)
-    - publish: /tmp/plot-bundle.tar.gz
+    - publish: /tmp/plot-bundle-$(os).tar.gz
       artifact: $(install_artifact_macos_mojave)
     
 - job: Job3
@@ -73,11 +73,11 @@ jobs:
       displayName: runs the random script
     - script: cd install && cd python-bindings && cd lib* && python3 histogram.py
       displayName: runs the histogram script
-    - script: cd install && cd python-bindings  && tar -zcvf plot-bundle-$(os).tar.gz output && cp plot-bundle-$(os).tar.gz/tmp
+    - script: cd install && cd python-bindings  && tar -zcvf plot-bundle-$(os).tar.gz output && cp plot-bundle-$(os).tar.gz /tmp
       displayName: creates tarball with histograms and copies to tmp
     - script: cd install && cd python-bindings  && rm -rf output
       displayName: clears the plot storage before making installer bundle
-    - script: tar -zcvf install-bundle.tar.gz install && cp install-bundle.tar.gz /tmp
+    - script: tar -zcvf install-bundle-$(os).tar.gz install && cp install-bundle-$(os).tar.gz /tmp
       displayName: creates tarball with install dir and copies to tmp
     - publish: /tmp/install-bundle-$(os).tar.gz
       artifact: $(plot-bundle-ubuntu)
