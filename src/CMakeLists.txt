@@ -32,7 +32,7 @@ add_custom_command(OUTPUT copy_scripts
   )# copies the test scripts into lib dir after install
   #once the python scripts which are based on the random module are inside the lib folder, they can be executed without issue
 add_custom_command(OUTPUT plot_storage
-    COMMAND mkdir ${python_bindings_dir}/output
+    COMMAND mkdir -p ${python_bindings_dir}/output
     DEPENDS copy_scripts
   )# creates output directory for python plot storage
 
@@ -44,4 +44,4 @@ install(DIRECTORY ${python_bindings_dir} DESTINATION ${CMAKE_INSTALL_PREFIX}/)
 # install(FILES ${python_bindings_dir} DESTINATION ${CMAKE_INSTALL_PREFIX}/new-folder )
 
 add_custom_target(run_extension ALL
-    DEPENDS copy_sources  build_bindings copy_scripts)
+    DEPENDS copy_sources  build_bindings copy_scripts plot_storage)

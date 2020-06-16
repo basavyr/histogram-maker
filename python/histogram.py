@@ -127,7 +127,7 @@ extension = '.pdf'
 
 which_os = os.system()
 
-NPLOTS=15
+NPLOTS = 15
 
 for plot_id in range(NPLOTS):
     print(f'Generating plot no-{plot_id+1}...')
@@ -149,6 +149,7 @@ for plot_id in range(NPLOTS):
     CreateHistogram(N1, N2, data_1, params1, bins1,
                     data_2, params2, bins2, filename1, filename2)
     print(f'Finished plot no-{plot_id+1}!')
+    print(f'\n')
 
 
 # print(data1_1)
