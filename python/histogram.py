@@ -142,11 +142,11 @@ NPLOTS = 50
 log_name = path_logs+'log-file-'+str(os.platform())+log_ext
 
 #SAFETY FOR DARWIN issue with IP
+IP = socket.gethostbyname('localhost')
 HOSTNAME = socket.gethostname()
 current_os = str(os.system())
-IP = socket.gethostbyname(HOSTNAME)
-if(current_os=='Darwin'):
-    IP = socket.gethostbyname('localhost')
+if(current_os!='Darwin'):
+    IP = socket.gethostbyname(HOSTNAME)
 
 # IP = socket.gethostbyname('localhost') # changed to localhost since there is an issue with macOS VMs on Azure 
 pyM = sys.version_info.major
