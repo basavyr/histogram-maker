@@ -17,7 +17,7 @@ struct Counter
 int rand_int(int left, int right)
 {
     //? declare mersenne twister here to get same random sequence each time this method is called
-    std::mt19937 twister(seed);
+    std::mt19937 twister{rd()};
     std::uniform_int_distribution<int> int_dist(left, right);
     auto r_int = int_dist(twister);
     return r_int;
@@ -51,7 +51,10 @@ std::vector<vType> normal_dist_container(size_t size, argType mean, argType std_
 {
     std::vector<vType> data;
     //? declare mersenne twister here to get same random sequence each time this method is called
-    std::mt19937 twister(seed);
+
+    // std::mt19937 twister_constant(seed); //? this twister uses a constant seed and it is used for debug purposes
+    //! RELEASE THE RANDOM DEVICE INTO DATA GENERATION
+    std::mt19937 twister{rd()}; //*random twister with each function
     //the norma distribution must be float or double
     //the integer container will be generated through the round function
     std::normal_distribution<double> normal(static_cast<double>(mean), static_cast<double>(std_dev));
