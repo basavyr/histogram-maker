@@ -142,7 +142,7 @@ NPLOTS = 50
 log_name = path_logs+'log-file-'+str(os.platform())+log_ext
 
 HOSTNAME = socket.gethostname()
-IP = socket.gethostbyname(HOSTNAME)
+IP = socket.gethostbyname('localhost') # changed to localhost since there is an issue with macOS VMs on Azure 
 current_os = str(os.system())
 pyM = sys.version_info.major
 pym = sys.version_info.minor
