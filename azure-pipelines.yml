@@ -27,9 +27,9 @@ jobs:
       displayName: clears the plot storage before making installer bundle
     - script: tar -zcvf install-bundle-$OS1.tar.gz install && cp install-bundle-$OS1.tar.gz /tmp
       displayName: creates tarball with install dir and copies to tmp
-    - publish: /tmp/plot-bundle-$OS1.tar.gz
+    - publish: /tmp/plot-bundle-$(os1).tar.gz
       artifact: $(plot_artifact_macos_catalina)
-    - publish: /tmp/install-bundle-$OS1.tar.gz
+    - publish: /tmp/install-bundle-$(os1).tar.gz
       artifact: $(install_artifact_macos_catalina)
 
 # - job: Job2
@@ -81,7 +81,7 @@ jobs:
       displayName: creates tarball with install dir and copies to tmp
     - script: cd /tmp && ls
       displayName: checks bundles
-    - publish: /tmp/plot-bundle-$OS3.tar.gz
+    - publish: /tmp/plot-bundle-$(os3).tar.gz
       artifact: $(plot-bundle-ubuntu)
-    - publish: /tmp/install-bundle-$OS3.tar.gz
+    - publish: /tmp/install-bundle-$(os3).tar.gz
       artifact: $(install-bundle-ubuntu)
