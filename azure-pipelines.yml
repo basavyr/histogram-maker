@@ -73,7 +73,7 @@ jobs:
       displayName: runs the random script
     - script: cd install && cd python-bindings && cd lib* && python3 histogram.py
       displayName: runs the histogram script
-    - script: cd install && cd python-bindings  && tar -zcvf plot-bundle-$(os).tar.gz output && cp plot-bundle-$(os).tar.gz /tmp
+    - script: cd install && cd python-bindings  && tar -zcvf plot-bundle-$(os).tar.gz output && cp plot-bundle-$(os).tar.gz/tmp
       displayName: creates tarball with histograms and copies to tmp
     - script: cd install && cd python-bindings  && rm -rf output
       displayName: clears the plot storage before making installer bundle
