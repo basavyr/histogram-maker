@@ -137,7 +137,7 @@ def generate_log_line(info):
     message = 'Plot'
 
 
-NPLOTS = 15
+NPLOTS = 50
 
 log_name = path_logs+'log-file-'+str(os.platform())+log_ext
 
