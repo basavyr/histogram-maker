@@ -1,8 +1,17 @@
+variables:
+  plot_artifact_macos_mojave: plot-bundle-macos-mojave
+  plot_artifact_macos_catalina: plot-bundle-macos-catalina
+  plot_artifact_ubuntu: plot-bundle-ubuntu
+  install_artifact_macos_mojave: install-bundle-macos-mojave
+  install_artifact_macos_catalina: install-bundle-macos-catalina
+  install_artifact_ubuntu: install-bundle-ubuntu
 jobs:
 - job: Job1
   displayName: Job-1 macOS Catalina
   pool:
     vmImage: "macos-latest"
+  variables:
+    os: darwin
   steps:
     - script: mkdir -p build && cd build && cmake -D CMAKE_INSTALL_PREFIX=../install ..
       displayName: build with cmake
@@ -19,14 +28,16 @@ jobs:
     - script: tar -zcvf install-bundle.tar.gz install && cp install-bundle.tar.gz /tmp
       displayName: creates tarball with install dir and copies to tmp
     - publish: /tmp/install-bundle.tar.gz
-      artifact: install-bundle
+      artifact: $(plot_artifact_macos_mojave)
     - publish: /tmp/plot-bundle.tar.gz
-      artifact: plot-bundle
+      artifact: $(install_artifact_macos_mojave)
 
 - job: Job2
   displayName: Job-2 macOS Mojave
   pool:
     vmImage: "macos-10.14"
+  variables:
+    os: darwin
   steps:
     - script: mkdir -p build && cd build && cmake -D CMAKE_INSTALL_PREFIX=../install ..
       displayName: build with cmake
@@ -43,14 +54,16 @@ jobs:
     - script: tar -zcvf install-bundle.tar.gz install && cp install-bundle.tar.gz /tmp
       displayName: creates tarball with install dir and copies to tmp
     - publish: /tmp/install-bundle.tar.gz
-      artifact: install-bundle
+      artifact: $(plot_artifact_macos_catalina)
     - publish: /tmp/plot-bundle.tar.gz
-      artifact: plot-bundle
+      artifact: $(install_artifact_macos_catalina)
     
 - job: Job3
   displayName: Job-3 Ubuntu
   pool:
     vmImage: "ubuntu-latest"
+  variables:
+    os: linux
   steps:
     - script: mkdir -p build && cd build && cmake -D CMAKE_INSTALL_PREFIX=../install ..
       displayName: build with cmake
@@ -67,6 +80,6 @@ jobs:
     - script: tar -zcvf install-bundle.tar.gz install && cp install-bundle.tar.gz /tmp
       displayName: creates tarball with install dir and copies to tmp
     - publish: /tmp/install-bundle.tar.gz
-      artifact: install-bundle
+      artifact: $(plot-bundle-ubuntu)
     - publish: /tmp/plot-bundle.tar.gz
-      artifact: plot-bundle
+      artifact: $(install-bundle-ubuntu)
