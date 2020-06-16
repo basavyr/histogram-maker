@@ -118,6 +118,8 @@ def CreateHistogram(N1, N2, data1, params1, bins1, data2, params2,  bins2, filen
     plt.close()
 
 
+path = '../output/'
+
 counts_filename = 'counts-hist'
 density_filename = 'dens-hist'
 
@@ -125,9 +127,12 @@ extension = '.pdf'
 
 which_os = os.system()
 
-for plot_id in range(2):
-    filename1 = density_filename+'-'+str(plot_id+1)+'-'+which_os+extension
-    filename2 = counts_filename+'-'+str(plot_id+1)+'-'+which_os+extension
+NPLOTS=15
+
+for plot_id in range(NPLOTS):
+    print(f'Generating plot no-{plot_id+1}...')
+    filename1 = path+density_filename+'-'+str(plot_id+1)+'-'+which_os+extension
+    filename2 = path+counts_filename+'-'+str(plot_id+1)+'-'+which_os+extension
     N1 = 1000
     N2 = 100000
     params1 = [[0, 10], [0, 15], [0, 25], [0, 35]]
@@ -143,7 +148,7 @@ for plot_id in range(2):
     bins2 = 55
     CreateHistogram(N1, N2, data_1, params1, bins1,
                     data_2, params2, bins2, filename1, filename2)
-    print(f'Generated plot no-{plot_id+1}')
+    print(f'Finished plot no-{plot_id+1}!')
 
 
 # print(data1_1)
