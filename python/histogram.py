@@ -121,6 +121,9 @@ def CreateHistogram(N1, N2, data1, params1, bins1, data2, params2,  bins2, filen
     plt.savefig(filename_counts, bbox_inches='tight')
     plt.close()
 
+    # plt.text(2, 2, build_label, fontsize=7, style='italic',
+    #          bbox={'facecolor': 'red', 'alpha': 0.1, 'pad': 10})
+
 
 path_plots = '../output/'
 path_logs = '../logs/'
@@ -167,6 +170,9 @@ for plot_id in range(1):
     N2 = 100000
     params1 = [[0, 10], [0, 15], [0, 25], [0, 35]]
     params2 = [[0, 50], [0, 75], [0, 85], [0, 120]]
+
+    # rng_container1=rnd.clhistogram(N1, params1[0][0], params1[0][1])
+    # rng_container1=rnd.clhistogram(N1, params1[0][0], params2[0][1])
 
     data_1 = [rnd.clhistogram(N1, params1[0][0], params1[0][1])[0], rnd.clhistogram(N1, params1[1][0], params1[1][1])[
         0], rnd.clhistogram(N1, params1[2][0], params1[2][1])[0], rnd.clhistogram(N1, params1[3][0], params1[3][1])[0]]

@@ -51,24 +51,37 @@ double average(const std::vector<T> &v)
     return static_cast<double>(sum / v.size());
 }
 
+// place to store the mersenne seed and the random device seed
+struct seed_holder
+{
+    u_int32_t mt_seed;
+    u_int32_t rd_seed;
+};
+
 template <typename vType, typename argType>
-std::vector<vType> normal_dist_container(size_t size, argType mean, argType std_dev, u_int32_t &save_mersenne)
+std::vector<vType> normal_dist_container(size_t size, argType mean, argType std_dev, seed_holder &saved_seeds)
 {
     std::vector<vType> data;
 
+    // std::random_device unique_rd;
+    // u_int32_t unique_rd_seed = unique_rd();
     //! declare mersenne twister here to get same random sequence each time this method is called
-    std::mt19937 twister{seed}; //*use the constant seed generated at the beginning of the source
-
+    // std::mt19937 unique_twister{unique_rd_seed}; //*use the constant seed generated at the beginning of the source
+    // u_int32_t unique_mt_seed = unique_twister();
+    std::mt19937 twister{seed};
     //saves a copy of the generated twister for debug purposes
-    save_mersenne = twister();
+    saved_seeds.rd_seed = seed;
+    saved_seeds.mt_seed = twister();
 
     //the normal distribution must be float or double
     //the integer container will be generated through the round function
-    std::normal_distribution<double> normal(static_cast<double>(mean), static_cast<double>(std_dev));
+    std::normal_distribution<double>
+        normal(static_cast<double>(mean), static_cast<double>(std_dev));
 
     for (auto id = 0; id < size; ++id)
     {
-        auto current_normal = std::round(normal(twister));
+        auto current_normal = std::round(normal(twister)); //? use the local Mersenne Twister - the scoped random device will be different with each function call
+        //* or use the global random device for having consistent data across all plots
         data.emplace_back(static_cast<vType>(current_normal));
     }
 
@@ -158,8 +171,8 @@ PyObject *generate_normalDistribution(PyObject *self, PyObject *args)
     double mean, std_dev;
     if (!PyArg_ParseTuple(args, "ndd", &data_size, &mean, &std_dev))
         return NULL;
-    u_int32_t save_twister;
-    auto data = normal_dist_container<int, double>(data_size, mean, std_dev, save_twister);
+    seed_holder saved_seeds;
+    auto data = normal_dist_container<int, double>(data_size, mean, std_dev, saved_seeds);
     PyObject *py_data = PyList_New(data_size);
     for (auto id = 0; id < data_size; ++id)
     {
@@ -181,9 +194,9 @@ PyObject *generate_clHistogram(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "ndd", &arr_size, &mean, &std_dev))
         return NULL;
 
-    u_int32_t save_random_device;
+    seed_holder saved_seeds;
 
-    auto data = normal_dist_container<int, double>(arr_size, mean, std_dev, save_random_device);
+    auto data = normal_dist_container<int, double>(arr_size, mean, std_dev, saved_seeds);
     auto counted_data = count_data(data);
     Py_ssize_t py_counted_size = counted_data.size();
 
@@ -192,8 +205,12 @@ PyObject *generate_clHistogram(PyObject *self, PyObject *args)
     PyObject *py_data_elements = PyList_New(py_counted_size);
     PyObject *py_data_counters = PyList_New(py_counted_size);
 
-    PyObject *py_mt_twister = PyLong_FromLong(save_random_device);
-    PyObject *py_rd_seed = PyLong_FromLong(seed);
+    PyObject *py_mt_seed = PyLong_FromLong(saved_seeds.mt_seed);
+    PyObject *py_rd_seed = PyLong_FromLong(saved_seeds.rd_seed);
+    Py_ssize_t tuple_size = 2;
+    PyObject *py_seed_tuple = PyTuple_New(tuple_size);
+    PyTuple_SetItem(py_seed_tuple, 0, py_rd_seed);
+    PyTuple_SetItem(py_seed_tuple, 1, py_mt_seed);
     for (auto id = 0; id < arr_size; ++id)
     {
         auto current_element = data.at(id);
@@ -208,12 +225,11 @@ PyObject *generate_clHistogram(PyObject *self, PyObject *args)
         PyList_SetItem(py_data_elements, id, py_element);
         PyList_SetItem(py_data_counters, id, py_counter);
     }
-    result = Py_BuildValue("OOOOOO", py_data, py_data_elements, py_data_counters, py_data_counters, py_rd_seed, py_mt_twister);
+    result = Py_BuildValue("OOOO", py_data, py_data_elements, py_data_counters, py_seed_tuple);
     Py_XDECREF(py_data);
     Py_XDECREF(py_data_elements);
     Py_XDECREF(py_data_counters);
-    Py_XDECREF(py_mt_twister);
-    Py_XDECREF(py_rd_seed);
+    Py_XDECREF(py_seed_tuple);
     return result;
 }
 
