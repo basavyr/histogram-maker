@@ -157,7 +157,7 @@ nl = '\n'
 
 log_file = open(log_name, 'w')
 
-for plot_id in range(NPLOTS):
+for plot_id in range(1):
     print(f'Generating plot no-{plot_id+1}...')
     filename1 = path_plots+density_filename + \
         '-'+str(plot_id+1)+'-'+which_os+extension

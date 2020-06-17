@@ -28,6 +28,7 @@ add_custom_command(OUTPUT build_bindings
 add_custom_command(OUTPUT copy_scripts
     COMMAND cp ${CMAKE_SOURCE_DIR}/python/randoms.py ${python_bindings_dir}/lib*
     COMMAND cp ${CMAKE_SOURCE_DIR}/python/histogram.py ${python_bindings_dir}/lib*
+    COMMAND cp ${CMAKE_SOURCE_DIR}/python/seeds.py ${python_bindings_dir}/lib*
     DEPENDS build_bindings
   )# copies the test scripts into lib dir after install
   #once the python scripts which are based on the random module are inside the lib folder, they can be executed without issue

@@ -1,10 +1,15 @@
 #include "randoms.hh"
 
-static std::random_device rd;
-static const int seed = 1137; //constant seed for debug purposes
+std::random_device rd;
+
+u_int32_t seed = rd(); //initiate the random device ONCE and save its random (entropy) state in a local variable for being used in every method that requires a random seed
+//the seed must be the same for each method for consistency reasons (+ initializing a random device multiple times is resource heavy)
+
+constexpr int c_seed = 1137; //constant seed for debug purposes
 //! if the mersenne twister is declared here, the method that generates the container will keep giving different numbers in the same runtime
 // static std::mt19937 twister{rd()};
 // static std::mt19937 twister{seed};
+// static std::mt19937 twister{c_seed};
 
 template <typename T>
 struct Counter
@@ -17,7 +22,7 @@ struct Counter
 int rand_int(int left, int right)
 {
     //? declare mersenne twister here to get same random sequence each time this method is called
-    std::mt19937 twister{rd()};
+    std::mt19937 twister{seed};
     std::uniform_int_distribution<int> int_dist(left, right);
     auto r_int = int_dist(twister);
     return r_int;
@@ -47,15 +52,17 @@ double average(const std::vector<T> &v)
 }
 
 template <typename vType, typename argType>
-std::vector<vType> normal_dist_container(size_t size, argType mean, argType std_dev)
+std::vector<vType> normal_dist_container(size_t size, argType mean, argType std_dev, u_int32_t &save_mersenne)
 {
     std::vector<vType> data;
-    //? declare mersenne twister here to get same random sequence each time this method is called
 
-    // std::mt19937 twister_constant(seed); //? this twister uses a constant seed and it is used for debug purposes
-    //! RELEASE THE RANDOM DEVICE INTO DATA GENERATION
-    std::mt19937 twister{rd()}; //*random twister with each function
-    //the norma distribution must be float or double
+    //! declare mersenne twister here to get same random sequence each time this method is called
+    std::mt19937 twister{seed}; //*use the constant seed generated at the beginning of the source
+
+    //saves a copy of the generated twister for debug purposes
+    save_mersenne = twister();
+
+    //the normal distribution must be float or double
     //the integer container will be generated through the round function
     std::normal_distribution<double> normal(static_cast<double>(mean), static_cast<double>(std_dev));
 
@@ -64,6 +71,7 @@ std::vector<vType> normal_dist_container(size_t size, argType mean, argType std_
         auto current_normal = std::round(normal(twister));
         data.emplace_back(static_cast<vType>(current_normal));
     }
+
     return data;
 }
 
@@ -150,8 +158,8 @@ PyObject *generate_normalDistribution(PyObject *self, PyObject *args)
     double mean, std_dev;
     if (!PyArg_ParseTuple(args, "ndd", &data_size, &mean, &std_dev))
         return NULL;
-    PyObject *result;
-    auto data = normal_dist_container<int, double>(data_size, mean, std_dev);
+    u_int32_t save_twister;
+    auto data = normal_dist_container<int, double>(data_size, mean, std_dev, save_twister);
     PyObject *py_data = PyList_New(data_size);
     for (auto id = 0; id < data_size; ++id)
     {
@@ -159,6 +167,7 @@ PyObject *generate_normalDistribution(PyObject *self, PyObject *args)
         PyObject *element_pure = PyLong_FromLong(current_element);
         PyList_SetItem(py_data, id, element_pure);
     }
+    PyObject *result;
     result = Py_BuildValue("O", py_data);
     Py_XDECREF(py_data);
     return result;
@@ -168,15 +177,23 @@ PyObject *generate_clHistogram(PyObject *self, PyObject *args)
 {
     Py_ssize_t arr_size;
     double mean, std_dev;
+
     if (!PyArg_ParseTuple(args, "ndd", &arr_size, &mean, &std_dev))
         return NULL;
-    auto data = normal_dist_container<int, double>(arr_size, mean, std_dev);
+
+    u_int32_t save_random_device;
+
+    auto data = normal_dist_container<int, double>(arr_size, mean, std_dev, save_random_device);
     auto counted_data = count_data(data);
     Py_ssize_t py_counted_size = counted_data.size();
+
     PyObject *result;
     PyObject *py_data = PyList_New(arr_size);
     PyObject *py_data_elements = PyList_New(py_counted_size);
     PyObject *py_data_counters = PyList_New(py_counted_size);
+
+    PyObject *py_mt_twister = PyLong_FromLong(save_random_device);
+    PyObject *py_rd_seed = PyLong_FromLong(seed);
     for (auto id = 0; id < arr_size; ++id)
     {
         auto current_element = data.at(id);
@@ -191,15 +208,22 @@ PyObject *generate_clHistogram(PyObject *self, PyObject *args)
         PyList_SetItem(py_data_elements, id, py_element);
         PyList_SetItem(py_data_counters, id, py_counter);
     }
-    // for (auto id = 0; id < py_counted_size; ++id)
-    // {
-    //     auto current_element = data.at(id);
-    //     PyObject *element_pure = PyLong_FromLong(current_element);
-    //     PyList_SetItem(py_data, id, element_pure);
-    // }
-    result = Py_BuildValue("OOO", py_data, py_data_elements, py_data_counters);
+    result = Py_BuildValue("OOOOOO", py_data, py_data_elements, py_data_counters, py_data_counters, py_mt_twister, py_rd_seed);
     Py_XDECREF(py_data);
     Py_XDECREF(py_data_elements);
     Py_XDECREF(py_data_counters);
+    Py_XDECREF(py_mt_twister);
+    Py_XDECREF(py_rd_seed);
+    return result;
+}
+
+PyObject *showSeeds(PyObject *self)
+{
+    u_int32_t rd_seed = seed;
+    u_int32_t mt_seed = std::mt19937(rd_seed)();
+    PyObject *py_rd_seed = PyLong_FromLong(rd_seed);
+    PyObject *py_mt_seed = PyLong_FromLong(mt_seed);
+    PyObject *result;
+    result = Py_BuildValue("OO", py_rd_seed, py_mt_seed);
     return result;
 }
