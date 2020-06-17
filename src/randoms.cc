@@ -1,8 +1,8 @@
 #include "randoms.hh"
 
-std::random_device rd;
+static std::random_device rd;
 
-u_int32_t seed = rd(); //initiate the random device ONCE and save its random (entropy) state in a local variable for being used in every method that requires a random seed
+static u_int32_t seed = rd(); //initiate the random device ONCE and save its random (entropy) state in a local variable for being used in every method that requires a random seed
 //the seed must be the same for each method for consistency reasons (+ initializing a random device multiple times is resource heavy)
 
 constexpr int c_seed = 1137; //constant seed for debug purposes
@@ -208,7 +208,7 @@ PyObject *generate_clHistogram(PyObject *self, PyObject *args)
         PyList_SetItem(py_data_elements, id, py_element);
         PyList_SetItem(py_data_counters, id, py_counter);
     }
-    result = Py_BuildValue("OOOOOO", py_data, py_data_elements, py_data_counters, py_data_counters, py_mt_twister, py_rd_seed);
+    result = Py_BuildValue("OOOOOO", py_data, py_data_elements, py_data_counters, py_data_counters, py_rd_seed, py_mt_twister);
     Py_XDECREF(py_data);
     Py_XDECREF(py_data_elements);
     Py_XDECREF(py_data_counters);
@@ -223,7 +223,11 @@ PyObject *showSeeds(PyObject *self)
     u_int32_t mt_seed = std::mt19937(rd_seed)();
     PyObject *py_rd_seed = PyLong_FromLong(rd_seed);
     PyObject *py_mt_seed = PyLong_FromLong(mt_seed);
+    Py_ssize_t tuple_size = 2;
+    PyObject *seeds = PyTuple_New(tuple_size);
+    PyTuple_SetItem(seeds, 0, py_rd_seed);
+    PyTuple_SetItem(seeds, 1, py_mt_seed);
     PyObject *result;
-    result = Py_BuildValue("OO", py_rd_seed, py_mt_seed);
+    result = Py_BuildValue("O", seeds);
     return result;
 }
