@@ -65,13 +65,17 @@ std::vector<vType> normal_dist_container(size_t size, argType mean, argType std_
 
     // std::random_device unique_rd;
     // u_int32_t unique_rd_seed = unique_rd();
+
     //! declare mersenne twister here to get same random sequence each time this method is called
+    std::mt19937 twister{seed}; //use the mersenne twister with the global random device as a seed
     // std::mt19937 unique_twister{unique_rd_seed}; //*use the constant seed generated at the beginning of the source
     // u_int32_t unique_mt_seed = unique_twister();
-    std::mt19937 twister{seed};
+
     //saves a copy of the generated twister for debug purposes
     saved_seeds.rd_seed = seed;
     saved_seeds.mt_seed = twister();
+    // saved_seeds.rd_seed = unique_rd_seed;
+    // saved_seeds.mt_seed = unique_twister();
 
     //the normal distribution must be float or double
     //the integer container will be generated through the round function
@@ -81,6 +85,7 @@ std::vector<vType> normal_dist_container(size_t size, argType mean, argType std_
     for (auto id = 0; id < size; ++id)
     {
         auto current_normal = std::round(normal(twister)); //? use the local Mersenne Twister - the scoped random device will be different with each function call
+        // auto current_normal = std::round(normal(unique_twister)); //? use the local Mersenne Twister - the scoped random device will be different with each function call
         //* or use the global random device for having consistent data across all plots
         data.emplace_back(static_cast<vType>(current_normal));
     }

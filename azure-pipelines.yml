@@ -77,23 +77,23 @@ jobs:
       displayName: build with cmake
     - script: cd build &&  make install
       displayName: install
-    - script: cd install && cd python-bindings && cd lib* && python3 seeds.py
-      displayName: runs the seed script
-    # - script: cd install && cd python-bindings && cd lib* && python3 histogram.py
-    #   displayName: runs the histogram script
-    # - script: cd install && cd python-bindings  && tar -zcvf plot-bundle-$OS3.tar.gz output && cp plot-bundle-$OS3.tar.gz /tmp
-    #   displayName: creates tarball with histograms and copies to tmp
-    # - script: cd install && cd python-bindings  && tar -zcvf logs-$OS3.tar.gz logs && cp logs-$OS3.tar.gz /tmp
-    #   displayName: creates tarball with logs and copies to tmp
-    # - script: cd install && cd python-bindings  && rm -rf output && rm -rf logs
-    #   displayName: clears the plot storage and logs before making installer bundle
-    # - script: tar -zcvf install-bundle-$OS3.tar.gz install && cp install-bundle-$OS3.tar.gz /tmp
-    #   displayName: creates tarball with install dir and copies to tmp
-    # - script: cd /tmp && ls
-    #   displayName: checks bundles
-    # - publish: /tmp/plot-bundle-$(os3).tar.gz
-    #   artifact: $(plot_artifact_ubuntu)
-    # - publish: /tmp/logs-$(os3).tar.gz
-    #   artifact: logs-job3
-    # - publish: /tmp/install-bundle-$(os3).tar.gz
-    #   artifact: $(install_artifact_ubuntu)
+    # - script: cd install && cd python-bindings && cd lib* && python3 seeds.py
+    #   displayName: runs the seed script
+    - script: cd install && cd python-bindings && cd lib* && python3 histogram.py
+      displayName: runs the histogram script
+    - script: cd install && cd python-bindings  && tar -zcvf plot-bundle-$OS3.tar.gz output && cp plot-bundle-$OS3.tar.gz /tmp
+      displayName: creates tarball with histograms and copies to tmp
+    - script: cd install && cd python-bindings  && tar -zcvf logs-$OS3.tar.gz logs && cp logs-$OS3.tar.gz /tmp
+      displayName: creates tarball with logs and copies to tmp
+    - script: cd install && cd python-bindings  && rm -rf output && rm -rf logs
+      displayName: clears the plot storage and logs before making installer bundle
+    - script: tar -zcvf install-bundle-$OS3.tar.gz install && cp install-bundle-$OS3.tar.gz /tmp
+      displayName: creates tarball with install dir and copies to tmp
+    - script: cd /tmp && ls
+      displayName: checks bundles
+    - publish: /tmp/plot-bundle-$(os3).tar.gz
+      artifact: $(plot_artifact_ubuntu)
+    - publish: /tmp/logs-$(os3).tar.gz
+      artifact: logs-job3
+    - publish: /tmp/install-bundle-$(os3).tar.gz
+      artifact: $(install_artifact_ubuntu)

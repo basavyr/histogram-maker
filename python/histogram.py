@@ -36,7 +36,7 @@ bins1 = 45
 bins2 = 55
 
 
-def CreateHistogram(N1, N2, data1, params1, bins1, data2, params2,  bins2, filename_dens, filename_counts):
+def CreateHistogram(N1, N2, data1, params1, bins1, data2, params2,  bins2, filename_dens, filename_counts, seeds):
     # preparing the data
     data1_1 = data1[0]
     data1_2 = data1[1]
@@ -55,8 +55,15 @@ def CreateHistogram(N1, N2, data1, params1, bins1, data2, params2,  bins2, filen
         2, 2)
     fig1.subplots_adjust(left=0.1, right=0.95, bottom=0.15)
     fig1.text(0.5, 0.03, 'x', ha='center')
-    fig1.text(0.5, 1, 'Histogram - Density', ha='center')
+
+    title_label = 'Histogram - Density'+' | ' + \
+        'rd='+str(seeds[0])+' ; '+'mt='+str(seeds[1])
+    fig1.text(0.5, 1, title_label, ha='center')
     fig1.text(-0.02, 0.5, 'Probability', va='center', rotation='vertical')
+
+    # seed_label = 'rd='+str(seeds[0])+'\n'+'mt='+str(seeds[1])
+    # fig1.text(0.5, 0.1, seed_label, fontsize=7, style='italic',
+    #           bbox={'facecolor': 'red', 'alpha': 0.1, 'pad': 10})
 
     ax1_1.set(title=f'Histogram for N={N1} data points')
     ax1_1.hist(data1_1, bins=bins1, histtype='stepfilled',
@@ -91,8 +98,16 @@ def CreateHistogram(N1, N2, data1, params1, bins1, data2, params2,  bins2, filen
         2, 2)
     fig1.subplots_adjust(left=0.1, right=0.95, bottom=0.15)
     fig1.text(0.5, 0.03, 'x', ha='center')
-    fig1.text(0.5, 1, 'Histogram - Counts', ha='center')
+
+    title_label = 'Histogram - Counts'+' | ' + \
+        'rd='+str(seeds[0])+' ; '+'mt='+str(seeds[1])
+    fig1.text(0.5, 1, title_label, ha='center')
     fig1.text(-0.02, 0.5, 'Counts', va='center', rotation='vertical')
+
+    # seed_label = 'rd='+str(seeds[0])+'\n'+'mt='+str(seeds[1])
+
+    # fig1.text(0.5, 1, seed_label, fontsize=7, style='italic',
+    #           bbox={'facecolor': 'red', 'alpha': 0.1, 'pad': 10})
 
     ax1_1.set(title=f'Histogram for N={N1} data points')
     ax1_1.hist(data1_1, bins=bins1, histtype='stepfilled',
@@ -121,9 +136,6 @@ def CreateHistogram(N1, N2, data1, params1, bins1, data2, params2,  bins2, filen
     plt.savefig(filename_counts, bbox_inches='tight')
     plt.close()
 
-    # plt.text(2, 2, build_label, fontsize=7, style='italic',
-    #          bbox={'facecolor': 'red', 'alpha': 0.1, 'pad': 10})
-
 
 path_plots = '../output/'
 path_logs = '../logs/'
@@ -144,14 +156,14 @@ NPLOTS = 50
 
 log_name = path_logs+'log-file-'+str(os.platform())+log_ext
 
-#SAFETY FOR DARWIN issue with IP
+# SAFETY FOR DARWIN issue with IP
 IP = socket.gethostbyname('localhost')
 HOSTNAME = socket.gethostname()
 current_os = str(os.system())
-if(current_os!='Darwin'):
+if(current_os != 'Darwin'):
     IP = socket.gethostbyname(HOSTNAME)
 
-# IP = socket.gethostbyname('localhost') # changed to localhost since there is an issue with macOS VMs on Azure 
+# IP = socket.gethostbyname('localhost') # changed to localhost since there is an issue with macOS VMs on Azure
 pyM = sys.version_info.major
 pym = sys.version_info.minor
 AARCH = str(os.processor())+'_'+str(os.architecture()[0])
@@ -160,7 +172,7 @@ nl = '\n'
 
 log_file = open(log_name, 'w')
 
-for plot_id in range(1):
+for plot_id in range(15):
     print(f'Generating plot no-{plot_id+1}...')
     filename1 = path_plots+density_filename + \
         '-'+str(plot_id+1)+'-'+which_os+extension
@@ -170,9 +182,7 @@ for plot_id in range(1):
     N2 = 100000
     params1 = [[0, 10], [0, 15], [0, 25], [0, 35]]
     params2 = [[0, 50], [0, 75], [0, 85], [0, 120]]
-
-    # rng_container1=rnd.clhistogram(N1, params1[0][0], params1[0][1])
-    # rng_container1=rnd.clhistogram(N1, params1[0][0], params2[0][1])
+    seeds = rnd.clhistogram(N2, params2[0][0], params2[0][1])[3]
 
     data_1 = [rnd.clhistogram(N1, params1[0][0], params1[0][1])[0], rnd.clhistogram(N1, params1[1][0], params1[1][1])[
         0], rnd.clhistogram(N1, params1[2][0], params1[2][1])[0], rnd.clhistogram(N1, params1[3][0], params1[3][1])[0]]
@@ -183,7 +193,7 @@ for plot_id in range(1):
     bins1 = 45
     bins2 = 55
     CreateHistogram(N1, N2, data_1, params1, bins1,
-                    data_2, params2, bins2, filename1, filename2)
+                    data_2, params2, bins2, filename1, filename2, seeds)
     print(f'Finished plot no-{plot_id+1}!')
     print(f'\n')
     status = 1
