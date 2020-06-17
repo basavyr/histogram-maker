@@ -152,7 +152,7 @@ def generate_log_line(info):
     message = 'Plot'
 
 
-NPLOTS = 50
+NPLOTS = 15
 
 log_name = path_logs+'log-file-'+str(os.platform())+log_ext
 
@@ -172,7 +172,7 @@ nl = '\n'
 
 log_file = open(log_name, 'w')
 
-for plot_id in range(15):
+for plot_id in range(NPLOTS):
     print(f'Generating plot no-{plot_id+1}...')
     filename1 = path_plots+density_filename + \
         '-'+str(plot_id+1)+'-'+which_os+extension
@@ -198,7 +198,7 @@ for plot_id in range(15):
     print(f'\n')
     status = 1
     now = str(datetime.utcnow())
-    s0 = f'HIST_ID={plot_id} STATUS={status} GEN_TIME @{now} IP={IP} HSTNM={HOSTNAME} PLTFM={current_os} AARCH={AARCH} PY_V={pyM}.{pym}'
+    s0 = f'HIST_ID={plot_id} STATUS={status} GEN_TIME @{now} IP={IP} HSTNM={HOSTNAME} PLTFM={current_os} AARCH={AARCH} PY_V={pyM}.{pym} RD_SEED={seeds[0]} MT_SEED={seeds[1]}'
     log_file.write(s0+nl)
 
 log_file.close()
