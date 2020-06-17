@@ -27,10 +27,15 @@ PyObject *generate_clHistogram(PyObject *self, PyObject *args);
 static const char generate_clHistogramMethodName[] = "clhistogram";
 static const char generate_clHistogramMethodDoc[] = "This method returns a visual histogram, when executed by the user from the command line. Uses std::map from C++";
 
+PyObject *showSeeds(PyObject *self);
+constexpr char showSeedsMethodName[] = "seeds";
+constexpr char showSeedsMethodDoc[] = "This method returns the random device seed and the Mersenne seed that are used for the container generation";
+
 static PyMethodDef randomsMethodDef[] = {
     {generate_randomsMethodName, generate_randoms, METH_VARARGS, generate_randomsMethodDoc},
     {generate_normalDistributionMethodName, generate_normalDistribution, METH_VARARGS, generate_normalDistributionMethodDoc},
     {generate_clHistogramMethodName, generate_clHistogram, METH_VARARGS, generate_clHistogramMethodDoc},
+    {showSeedsMethodName, (PyCFunction)showSeeds,METH_NOARGS, showSeedsMethodDoc},
     {NULL, NULL, 0, NULL}};
 
 #ifdef PY3K
